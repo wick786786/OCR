@@ -1,5 +1,3 @@
-// src/App.js
-
 import React, { useState } from 'react';
 import axios from 'axios';
 
@@ -13,6 +11,7 @@ function App() {
     if (!selectedFile) return;
 
     setImage(selectedFile);
+    setOcrResult(null);
     setErrorMessage('');
   };
 
@@ -24,10 +23,28 @@ function App() {
 
     const base64Image = await convertImageToBase64(image);
     try {
-      const { data } = await axios.post('https://vision.googleapis.com/v1/images:annotate?key=AIzaSyBGxOf7sgo5ZPoPp4EAP-pic-6x0Nh92gQ', { image: base64Image });
-      setOcrResult(data);
+      const requestData = {
+        requests: [
+          {
+            image: {
+              content: base64Image
+            },
+            features: [
+              {
+                type: "DOCUMENT_TEXT_DETECTION"
+              }
+            ]
+          }
+        ]
+      };
+
+      const { data } = await axios.post('https://vision.googleapis.com/v1/images:annotate?key=AIzaSyBGxOf7sgo5ZPoPp4EAP-pic-6x0Nh92gQ', requestData);
+      
+      const extractedData = extractThaiIDCardData(data.responses[0].fullTextAnnotation.text);
+      setOcrResult(extractedData);
       setErrorMessage('');
     } catch (error) {
+      console.error(error);
       setErrorMessage('Error processing image.');
     }
   };
@@ -56,6 +73,73 @@ function App() {
     });
   };
 
+  const extractThaiIDCardData = (fullText) => {
+    const lines = fullText.split('\n');
+    
+    let identification_number = '';
+    let first_name = '';
+    let last_name = '';
+    let date_of_birth = '';
+  
+    // Extract Identification Number (from the second line)
+    if (lines.length > 1) {
+      const secondLine = lines[1].trim();
+      const idParts = secondLine.split(' ').filter(part => part); // Remove empty parts
+      if (idParts.length === 5 && idParts.every(part => !isNaN(part))) {
+        identification_number = idParts.join(' ');
+      }
+    }
+  
+    // Extract Name (from the line starting with "ชื่อตัวและชื่อสกุล")
+    
+      // Extract Name (from the line starting with "ชื่อตัวและชื่อสกุล")
+      const nameLineIndex = lines.findIndex(line => line.startsWith("Name"));
+if (nameLineIndex !== -1 && lines.length > nameLineIndex) {
+    console.log("Name Line:", lines[nameLineIndex]);  // Temporary log
+    const nameParts = lines[nameLineIndex].split(' ').filter(part => part); // Split the line by spaces and remove empty parts
+    console.log("Name Parts:", nameParts);  // Temporary log
+    //if (nameParts.length >= 4) { // Adjusted the check to 4 based on the expected structure
+        first_name = nameParts[2]; // First name is after "น.ส."
+        console.log(`${first_name} yours natarika`);
+        
+    //}
+    
+}
+const nameLineIndex2 = lines.findIndex(line => line.startsWith("Last"));
+if (nameLineIndex2 !== -1 && lines.length > nameLineIndex2) {
+    console.log("Name Line:", lines[nameLineIndex2]);  // Temporary log
+    const nameParts = lines[nameLineIndex2].split(' ').filter(part => part); // Split the line by spaces and remove empty parts
+    console.log("Name Parts:", nameParts);  // Temporary log
+    //if (nameParts.length >= 4) { // Adjusted the check to 4 based on the expected structure
+        last_name = nameParts[2]; // First name is after "น.ส."
+        console.log(`${first_name} yours natarika`);
+
+
+console.log("aapka last naaaaaam:", last_name);
+
+}
+
+  
+    // Extract Date of Birth (from the line starting with "เกิดวันที่")
+    const dobLineIndex = lines.findIndex(line => line.startsWith("เกิดวันที่"));
+    if (dobLineIndex !== -1 && lines.length > dobLineIndex + 1) {
+      date_of_birth = lines[dobLineIndex + 1].trim(); // Extract the line right after the line starting with "เกิดวันที่"
+    }
+  
+    return {
+      identification_number,
+      first_name,
+      last_name,
+      date_of_birth
+    };
+  };
+  
+  // Usage
+  const rawData = `...`;  // Your OCR raw text
+  const extractedData = extractThaiIDCardData(rawData);
+  console.log(extractedData);
+  
+  
   return (
     <div className="app-container">
       <h1>Thai ID Card OCR</h1>
@@ -69,14 +153,13 @@ function App() {
 
       {ocrResult && (
         <div className="ocr-result">
-          <h2>OCR Result</h2>
+          <h2>Extracted Data</h2>
           <ul>
             <li>Identification Number: {ocrResult.identification_number || 'N/A'}</li>
-            <li>Name: {ocrResult.name || 'N/A'}</li>
-            <li>Last Name: {ocrResult.last_name || 'N/A'}</li>
-            <li>Date of Birth: {ocrResult['date-of-birth'] || 'N/A'}</li>
-            <li>Date of Issue: {ocrResult['date-of-issue'] || 'N/A'}</li>
-            <li>Date of Expiry: {ocrResult['date-of-expiry'] || 'N/A'}</li>
+            <li>First Name: {ocrResult.first_name || 'N/A'}</li>
+            <li>last Name:{ocrResult.last_name ||'N/A'}</li>
+            <li>{ocrResult.date_of_birth||'N/A'}</li>
+            {/* Add more fields as needed */}
           </ul>
         </div>
       )}
