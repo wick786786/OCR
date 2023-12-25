@@ -2,9 +2,14 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 function App() {
+
   const [image, setImage] = useState(null);
   const [ocrResult, setOcrResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
+
+ 
+// ... rest of your App.js code
+
 
   const uploadImage = (e) => {
     const selectedFile = e.target.files[0];
@@ -80,6 +85,8 @@ function App() {
     let first_name = '';
     let last_name = '';
     let date_of_birth = '';
+    let date_of_issue='';
+    let date_of_expiry='';
   
     // Extract Identification Number (from the second line)
     if (lines.length > 1) {
@@ -122,15 +129,21 @@ console.log("aapka last naaaaaam:", last_name);
   
     // Extract Date of Birth (from the line starting with "เกิดวันที่")
     const dobLineIndex = lines.findIndex(line => line.startsWith("เกิดวันที่"));
-    if (dobLineIndex !== -1 && lines.length > dobLineIndex + 1) {
-      date_of_birth = lines[dobLineIndex + 1].trim(); // Extract the line right after the line starting with "เกิดวันที่"
-    }
-  
+if (dobLineIndex !== -1 && lines.length > dobLineIndex + 1) {
+    const dobLine = lines[dobLineIndex + 1].trim();
+    const match = dobLine.match(/\d{1,2}\s\w{3}\.\s\d{4}/); // Match the date pattern
+    date_of_birth = match ? match[0] : "N/A"; // Use the matched date or set to "N/A" if no match found
+}
+
+    
+     
     return {
       identification_number,
       first_name,
       last_name,
-      date_of_birth
+      date_of_birth,
+      date_of_expiry,
+      date_of_issue
     };
   };
   
@@ -159,6 +172,8 @@ console.log("aapka last naaaaaam:", last_name);
             <li>First Name: {ocrResult.first_name || 'N/A'}</li>
             <li>last Name:{ocrResult.last_name ||'N/A'}</li>
             <li>{ocrResult.date_of_birth||'N/A'}</li>
+            <li>Expiry Date:{ocrResult.date_of_expiry||'N/A'}</li>
+            <li>date_of_issue{ocrResult.date_of_issue||'N/A'}</li>
             {/* Add more fields as needed */}
           </ul>
         </div>
