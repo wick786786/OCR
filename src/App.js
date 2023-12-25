@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
 import { uploadImage, processImage } from './api';
 import { extractThaiIDCardData } from './ocrUtils';
-
+import EditForm from './EditForm';
 function App() {
   const [image, setImage] = useState(null);
   const [ocrResult, setOcrResult] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isEditMode, setEditMode] = useState(false);
+
+  const handleEditSubmit = (e) => {
+    e.preventDefault();
+    // Extract values from form and handle saving or updating data
+    // For now, just toggle the edit mode off
+    setEditMode(false);
+  };
 
   const handleUpload = (e) => uploadImage(e, setImage, setOcrResult, setErrorMessage);
   const handleProcess = () => processImage(image, setOcrResult, setErrorMessage);
@@ -20,6 +28,11 @@ function App() {
       {image && <img src={URL.createObjectURL(image)} alt="Uploaded" style={{ maxWidth: '300px' }} />}
 
       <button onClick={handleProcess}>Process Image</button>
+      <button onClick={() => setEditMode(true)}>Edit Details</button>
+      {isEditMode && (
+        <EditForm data={ocrResult} onSubmit={handleEditSubmit} />
+      )}
+
 
       {ocrResult && (
         <div className="ocr-result">
