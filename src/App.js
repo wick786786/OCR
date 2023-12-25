@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { uploadImage, processImage } from './api';
 import { extractThaiIDCardData } from './ocrUtils';
+import './App.css'; // Assuming you have an App.css file for styling
 import EditForm from './EditForm';
 function App() {
   const [image, setImage] = useState(null);
@@ -18,21 +19,31 @@ function App() {
   const handleUpload = (e) => uploadImage(e, setImage, setOcrResult, setErrorMessage);
   const handleProcess = () => processImage(image, setOcrResult, setErrorMessage);
 
+ 
+
+
+
   return (
     <div className="app-container">
-      <h1>Thai ID Card OCR</h1>
+      <h1 className="title">Thai ID Card OCR</h1>
 
-      <input type="file" accept="image/jpeg, image/png" onChange={handleUpload} />
-      {errorMessage && <p className="error-message">{errorMessage}</p>}
+      <div className="upload-section">
+        <input type="file" accept="image/jpeg, image/png" onChange={handleUpload} />
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
+      </div>
 
-      {image && <img src={URL.createObjectURL(image)} alt="Uploaded" style={{ maxWidth: '300px' }} />}
+      {image && <img src={URL.createObjectURL(image)} alt="Uploaded" className="uploaded-image" />}
 
-      <button onClick={handleProcess}>Process Image</button>
-      <button onClick={() => setEditMode(true)}>Edit Details</button>
+      <div className="action-buttons">
+        <button className="action-button" onClick={handleProcess}>Process Image</button>
+        <button className="action-button" onClick={() => setEditMode(true)}>Edit Details</button>
+      </div>
+
       {isEditMode && (
+        <div className="edit-form-container">
         <EditForm data={ocrResult} onSubmit={handleEditSubmit} />
+      </div>
       )}
-
 
       {ocrResult && (
         <div className="ocr-result">
@@ -52,3 +63,4 @@ function App() {
 }
 
 export default App;
+

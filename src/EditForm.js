@@ -4,7 +4,7 @@ import React from 'react';
 
 const EditForm = ({ data, onSubmit }) => {
   return (
-    <form onSubmit={onSubmit}>
+    <form className="form-container"  onSubmit={onSubmit}>
       <label>
         First Name:
         <input type="text" name="firstName" defaultValue={data.first_name} />
