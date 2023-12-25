@@ -135,8 +135,25 @@ if (dobLineIndex !== -1 && lines.length > dobLineIndex + 1) {
     date_of_birth = match ? match[0] : "N/A"; // Use the matched date or set to "N/A" if no match found
 }
 
-    
-     
+     // Extract Date of Expiry (from the line starting with "วันบัตรหมดอายุ")
+     const expiryLineIndex = lines.findIndex((line) =>
+     line.startsWith("วันบัตรหมดอายุ")
+   );
+   if (expiryLineIndex !== -1 && lines.length > expiryLineIndex + 1) {
+     date_of_expiry = new Date(lines[expiryLineIndex + 1].trim());
+   }
+
+   // Extract Date of Issue (from the line starting with "วันออกบัตร")
+   const issueLineIndex = lines.findIndex((line) =>
+     line.startsWith("วันออกบัตร")
+   );
+   if (issueLineIndex !== -1 && lines.length > issueLineIndex + 1) {
+     date_of_issue = new Date(lines[issueLineIndex + 1].trim());
+   }
+     // Convert Date objects to strings
+date_of_expiry = date_of_expiry ? date_of_expiry.toLocaleDateString('en-GB') : "N/A";
+date_of_issue = date_of_issue ? date_of_issue.toLocaleDateString('en-GB') : "N/A";
+
     return {
       identification_number,
       first_name,
@@ -174,6 +191,7 @@ if (dobLineIndex !== -1 && lines.length > dobLineIndex + 1) {
             <li>{ocrResult.date_of_birth||'N/A'}</li>
             <li>Expiry Date:{ocrResult.date_of_expiry||'N/A'}</li>
             <li>date_of_issue{ocrResult.date_of_issue||'N/A'}</li>
+
             {/* Add more fields as needed */}
           </ul>
         </div>
