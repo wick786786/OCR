@@ -25,13 +25,21 @@ input[type="file"] {
 
 button {
   padding: 10px 20px;
-  margin: 20px 10px;
+  margin: 20px 10px; /* Adjusted margin for more space between buttons */
   border: none;
   border-radius: 4px;
   background-color: #007bff;
   color: white;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-bottom: 20px;
+}
+.process-btn {
+  margin-right: 20px; /* Space between the Process Images button and the next element */
+}
+
+.edit-btn {
+  margin-left: 20px; /* Space between the Edit Details button and the previous element */
 }
 
 button:hover {
@@ -62,4 +70,41 @@ button:hover {
 
 .history li {
   margin: 10px 0;
+}
+
+/* Added styles for date selection and filter button */
+.date-selection-button {
+  margin-right: 10px; /* Space between date selection button and filter button */
+}
+
+.filter-button {
+  margin-left: 10px; /* Space between date selection button and filter button */
+}
+
+/* Update your CSS file or add to existing styles */
+
+.edit-form-container {
+  max-width: 600px;
+  margin: 50px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  margin-bottom: 20px; /* space between each form group */
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
