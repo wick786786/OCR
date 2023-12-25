@@ -1,4 +1,5 @@
 import React from "react";
+import './Edit.css';
 
 const EditForm = ({ data, onSubmit }) => {
   return (
